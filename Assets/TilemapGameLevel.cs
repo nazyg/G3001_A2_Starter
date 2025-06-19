@@ -29,12 +29,10 @@ public class TilemapGameLevel : MonoBehaviour
         }
     }
 
-    // 🔁 GetNeighbours function
     public List<Vector3Int> GetNeighbours(Vector3Int currentTilePos)
     {
         List<Vector3Int> neighbours = new List<Vector3Int>();
 
-        // Kuzey, Güney, Doğu, Batı yönleri
         Vector3Int[] directions = {
             new Vector3Int(0, 1, 0),   // North
             new Vector3Int(0, -1, 0),  // South
@@ -46,7 +44,6 @@ public class TilemapGameLevel : MonoBehaviour
         {
             Vector3Int neighbourPos = currentTilePos + dir;
 
-            // Sadece floor tile olan komşular döndürülür
             if (tilemap.GetTile(neighbourPos) == floorTile)
             {
                 neighbours.Add(neighbourPos);
@@ -58,31 +55,26 @@ public class TilemapGameLevel : MonoBehaviour
         {
             if (tilemap == null || floorTile == null) return;
 
-            // Haritadaki her tile'ı kontrol et
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
                     Vector3Int pos = new Vector3Int(x, y, 0);
 
-                    // Sadece geçerli tile ise işleme devam et
                     if (tilemap.GetTile(pos) == floorTile)
                     {
                         Vector3 center = tilemap.GetCellCenterWorld(pos);
 
-                        // Komşuları al
                         var neighbours = GetNeighbours(pos);
 
                         foreach (var nPos in neighbours)
                         {
                             Vector3 nCenter = tilemap.GetCellCenterWorld(nPos);
 
-                            // Yeşil bağlantı çiz
                             Gizmos.color = Color.green;
                             Gizmos.DrawLine(center, nCenter);
                         }
 
-                        // Düğüme daire çiz
                         Gizmos.color = Color.yellow;
                         Gizmos.DrawSphere(center, 0.1f);
                     }
