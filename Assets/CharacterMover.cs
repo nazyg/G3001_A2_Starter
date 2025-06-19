@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CharacterMover : MonoBehaviour
 {
     public Tilemap tilemap;
-    public List<TileBase> walkableTiles;  // çoklu tile türü destekle
+    public List<TileBase> walkableTiles;  
     public float moveSpeed = 5f;
 
     private Vector3 targetPosition;
@@ -45,7 +45,6 @@ public class CharacterMover : MonoBehaviour
         }
     }
 
-    // 🔎 Bu fonksiyon artık birden fazla tile tipini kontrol eder
     bool IsWalkable(Vector3Int pos)
     {
         TileBase tile = tilemap.GetTile(pos);
