@@ -805,6 +805,7 @@ GameObject:
   - component: {fileID: 458221919}
   - component: {fileID: 458221918}
   - component: {fileID: 458221920}
+  - component: {fileID: 458221921}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -963,6 +964,23 @@ MonoBehaviour:
   width: 10
   height: 10
   floorSpawnThreshold: 0.75
+--- !u!114 &458221921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458221914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ca6408a8e353924aac784883ae0ca2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 458221919}
+  gameLevel: {fileID: 0}
+  visitedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  pathColor: {r: 0, g: 1, b: 0, a: 1}
+  iterationDelay: 0.1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
