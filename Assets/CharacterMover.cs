@@ -5,11 +5,15 @@ using System.Collections.Generic;
 public class CharacterMover : MonoBehaviour
 {
     public Tilemap tilemap;
-    public List<TileBase> walkableTiles;  
+    public List<TileBase> walkableTiles;
     public float moveSpeed = 5f;
 
     private Vector3 targetPosition;
     private bool isMoving = false;
+
+    // Path following
+    private Queue<Vector3Int> pathQueue = new Queue<Vector3Int>();
+    private bool isFollowingPath = false;
 
     void Start()
     {
@@ -17,6 +21,18 @@ public class CharacterMover : MonoBehaviour
     }
 
     void Update()
+    {
+        if (isFollowingPath)
+        {
+            FollowPath();
+        }
+        else
+        {
+            ManualControl();
+        }
+    }
+
+    void ManualControl()
     {
         if (!isMoving)
         {
@@ -36,12 +52,37 @@ public class CharacterMover : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, targetPosition) < 0.01f)
+            MoveToTarget();
+        }
+    }
+
+    void FollowPath()
+    {
+        if (!isMoving && pathQueue.Count > 0)
+        {
+            Vector3Int nextTile = pathQueue.Dequeue();
+            targetPosition = tilemap.GetCellCenterWorld(nextTile);
+            isMoving = true;
+        }
+
+        if (isMoving)
+        {
+            MoveToTarget();
+
+            if (pathQueue.Count == 0 && !isMoving)
             {
-                transform.position = targetPosition;
-                isMoving = false;
+                isFollowingPath = false; // path bitti
             }
+        }
+    }
+
+    void MoveToTarget()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        if (Vector3.Distance(transform.position, targetPosition) < 0.01f)
+        {
+            transform.position = targetPosition;
+            isMoving = false;
         }
     }
 
@@ -49,5 +90,21 @@ public class CharacterMover : MonoBehaviour
     {
         TileBase tile = tilemap.GetTile(pos);
         return walkableTiles.Contains(tile);
+    }
+
+    public void SetPath(List<Vector3Int> path)
+    {
+        pathQueue.Clear();
+
+        // start tile karakterin altındaki tile olabilir, onu atla
+        Vector3Int currentTile = tilemap.WorldToCell(transform.position);
+
+        foreach (var step in path)
+        {
+            if (step != currentTile)
+                pathQueue.Enqueue(step);
+        }
+
+        isFollowingPath = true;
     }
 }
