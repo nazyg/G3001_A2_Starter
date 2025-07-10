@@ -977,10 +977,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 458221919}
-  gameLevel: {fileID: 0}
+  gameLevel: {fileID: 458221917}
   visitedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   pathColor: {r: 0, g: 1, b: 0, a: 1}
   iterationDelay: 0.1
+  tileCostTextPrefab: {fileID: 4277058960590680135, guid: e882431fbe99417409a40b9554182683, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2086,7 +2087,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!222 &2041859326835483606
 CanvasRenderer:
   m_ObjectHideFlags: 0
