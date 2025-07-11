@@ -12,7 +12,6 @@ public class Pathfinder : MonoBehaviour
     public Color pathColor = Color.green;
     public float iterationDelay = 0.1f;
 
-    // Oyun içi cost gösterimi için:
     public GameObject tileCostTextPrefab;
     private Dictionary<Vector3Int, GameObject> costTexts = new();
 
@@ -26,7 +25,6 @@ public class Pathfinder : MonoBehaviour
     private bool isSolving = false;
     private List<Vector3Int> finalPath = new();
 
-    // Step-through variables
     private bool stepMode = false;
     private bool stepReady = false;
     private bool waitForMove = false;
@@ -40,15 +38,12 @@ public class Pathfinder : MonoBehaviour
 
     void Update()
     {
-        // Çözüm sırasında step-through kontrolü
         if (isSolving)
         {
-            // Step-through modunda Space'e basınca bir adım ilerle
             if (stepMode && Input.GetKeyDown(KeyCode.Space))
             {
                 stepReady = true;
             }
-            // Path hazırsa Enter ile Monster'ı yürüt
             if (waitForMove && Input.GetKeyDown(KeyCode.Return))
             {
                 Object.FindFirstObjectByType<CharacterMover>()?.SetPath(finalPath);
@@ -57,30 +52,27 @@ public class Pathfinder : MonoBehaviour
             return;
         }
 
-        // Start ve Goal seçimi (mouse)
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
         Vector3Int tilePos = tilemap.WorldToCell(mouseWorld);
 
-        if (Input.GetMouseButtonDown(1))  // Sağ tık: Start tile seç
+        if (Input.GetMouseButtonDown(1))  
         {
             startTile = tilePos;
             Debug.Log("Start set to " + tilePos);
         }
-        else if (Input.GetMouseButtonDown(0))  // Sol tık: Goal tile seç
+        else if (Input.GetMouseButtonDown(0))  
         {
             goalTile = tilePos;
             Debug.Log("Goal set to " + tilePos);
         }
 
-        // Step-through başlat (Space)
         if (Input.GetKeyDown(KeyCode.Space) && startTile.HasValue && goalTile.HasValue)
         {
             stepMode = true;
             StartCoroutine(DijkstraStepSolve());
         }
 
-        // Otomatik hızlı çözüm başlat (F)
         if (Input.GetKeyDown(KeyCode.F) && startTile.HasValue && goalTile.HasValue)
         {
             stepMode = false;
@@ -88,7 +80,6 @@ public class Pathfinder : MonoBehaviour
         }
     }
 
-    // Step-through coroutine
     IEnumerator DijkstraStepSolve()
     {
         isSolving = true;
@@ -108,7 +99,6 @@ public class Pathfinder : MonoBehaviour
 
         while (unvisited.Count > 0)
         {
-            // Space'e basılana kadar bekle
             stepReady = false;
             while (!stepReady)
                 yield return null;
@@ -126,7 +116,7 @@ public class Pathfinder : MonoBehaviour
             {
                 if (visited.Contains(neighbor)) continue;
 
-                float tentativeCost = currentCost + 1; // Tile cost = 1
+                float tentativeCost = currentCost + 1;
 
                 if (!nodeData.ContainsKey(neighbor) || tentativeCost < nodeData[neighbor].gCost)
                 {
@@ -137,13 +127,11 @@ public class Pathfinder : MonoBehaviour
                     };
                     unvisited.Add(neighbor);
 
-                    // Oyun içinde cost'u göster
                     ShowTileCost(neighbor, tentativeCost);
                 }
             }
         }
 
-        // Path bulunduysa, Enter ile yürüt
         if (nodeData.ContainsKey(goal))
         {
             Vector3Int current = goal;
@@ -166,7 +154,6 @@ public class Pathfinder : MonoBehaviour
         isSolving = false;
     }
 
-    // Otomatik çözüm (isteğe bağlı)
     IEnumerator DijkstraSolve()
     {
         isSolving = true;
@@ -254,25 +241,22 @@ public class Pathfinder : MonoBehaviour
     {
         if (tileCostTextPrefab == null) return;
 
-        // Zaten varsa güncelle
         if (costTexts.ContainsKey(pos))
         {
             var tmp = costTexts[pos].GetComponent<TMPro.TextMeshPro>();
-            tmp.text = cost.ToString(); // Sayıyı yaz!
+            tmp.text = cost.ToString(); 
             return;
         }
 
-        // Yeni oluşturuluyorsa:
         var go = Instantiate(tileCostTextPrefab, tilemap.GetCellCenterWorld(pos) + new Vector3(0, 0.2f, 0), Quaternion.identity);
         var tmpComp = go.GetComponent<TMPro.TextMeshPro>();
-        tmpComp.text = cost.ToString(); // YAZMAZSAN "T" KALIR!
+        tmpComp.text = cost.ToString(); 
         tmpComp.fontSize = 4;
         tmpComp.color = Color.white;
         costTexts[pos] = go;
     }
 
 
-    // Cost textlerini temizler (her arama öncesi çağır)
     void ClearCostTexts()
     {
         foreach (var go in costTexts.Values)
@@ -280,7 +264,6 @@ public class Pathfinder : MonoBehaviour
         costTexts.Clear();
     }
 
-    // Debug view (Editor Gizmos)
     void OnDrawGizmos()
     {
         if (!tilemap) return;
